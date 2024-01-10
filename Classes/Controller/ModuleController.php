@@ -69,6 +69,7 @@ class ModuleController extends ActionController
         $this->conf['clearCache'] = (bool)$extConf['clearCache'];
         $this->conf['langKeysAllowed'] = $this->conf['langKeys'];
         $this->conf['translatorInfo'] = (string)$extConf['translatorInfo'];
+        $this->conf['emptyXlfFilePath'] = (string)$extConf['emptyXlfFilePath'];
         if (!((bool)$extConf['modifyDefaultLang'] || $GLOBALS['BE_USER']->isAdmin() || $this->conf['modifyKeys'])) {
             unset($this->conf['langKeysAllowed']['default']);
         }
@@ -455,8 +456,8 @@ class ModuleController extends ActionController
                 if (!file_exists($dir)) {
                     GeneralUtility::mkdir_deep($dir);
                 }
-                $src = realpath(__DIR__ . '/../../Resources/Private/Templates/Empty.xlf');
-                if (!@copy($src, $path)) {
+                $src = GeneralUtility::getFileAbsFileName($this->conf['emptyXlfFilePath']);
+                if(!GeneralUtility::upload_copy_move($src, $path)) {
                     $this->addFlashMessage('Could not create file', 'Error', AbstractMessage::ERROR);
                 }
             }
