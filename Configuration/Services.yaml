@@ -9,3 +9,6 @@ services:
 
   Undefined\TranslateLocallang\Controller\ModuleController:
     tags: ['backend.controller']
+
+  Undefined\TranslateLocallang\Contract\XliffValueEncoderInterface:
+    alias: Undefined\TranslateLocallang\Service\XliffValueEncoder

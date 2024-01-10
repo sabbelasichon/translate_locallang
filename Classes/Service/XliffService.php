@@ -19,6 +19,7 @@ namespace Undefined\TranslateLocallang\Service;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
+use Undefined\TranslateLocallang\Contract\XliffValueEncoderInterface;
 use Undefined\TranslateLocallang\Utility\TranslateUtility;
 
 class XliffService
@@ -65,6 +66,13 @@ class XliffService
     * @var array
     */
     protected $languageLoaded = [];
+    private XliffValueEncoderInterface $xliffValueEncoder;
+
+
+    public function __construct(XliffValueEncoderInterface $xliffValueEncoder)
+    {
+        $this->xliffValueEncoder = $xliffValueEncoder;
+    }
 
     /**
      * @param array $extension
@@ -340,8 +348,8 @@ class XliffService
             if (isset($this->data[$key]['default'])) {
                 $labels[$key] = [
                     0 => [
-                        'source' => $this->encodeValue($this->data[$key]['default']),
-                        'target' => $this->encodeValue($this->data[$key][$langKey])
+                        'source' => $this->xliffValueEncoder->encodeValue($this->data[$key]['default']),
+                        'target' => $this->xliffValueEncoder->encodeValue($this->data[$key][$langKey])
                 ]];
             }
         }
@@ -360,16 +368,4 @@ class XliffService
         return $xliffview->render();
     }
 
-    /**
-     * @param string $str
-     * @return string
-     */
-    protected function encodeValue(string $str): string
-    {
-        if (strpos(ltrim($str), static::CDATA_START) === 0) {
-            return ltrim($str);
-        } else {
-            return htmlspecialchars($str);
-        }
-    }
 }
